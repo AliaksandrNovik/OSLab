@@ -1,23 +1,100 @@
 package OS.rfe.by.novik.user;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
+
+import OS.rfe.by.novik.instruction.Instruction;
+import OS.rfe.by.novik.instruction.TYPE;
+import OS.rfe.by.novik.process.Process;
+import OS.rfe.by.novik.program.Program;
+import OS.rfe.by.novik.system.System;
 
 public class User {
-	
-	public  List<System> listSystem;
 
+
+	public  System system;
+	
 	public int processesGenerated;
 
 	public int processesToGenerate;
+	
+	public boolean isFinished;
+	
+	public int ratio;
+	
+	int minICPU;
+	int maxICPU;
+	int minIIO;
+	int maxIIO;
+	int minInstructions;
+	int maxInstructions;
+
+
+	private static Logger log = Logger.getLogger(User.class.getName());
+	
+	public User(int processesToGenerate, int ratio, int minICPU, int maxICPU, int minIIO, int maxIIO,
+			int minInstructions, int maxInstructions) {
+		super();
+		this.ratio = ratio;
+		this.minICPU = minICPU;
+		this.maxICPU = maxICPU;
+		this.minIIO = minIIO;
+		this.maxIIO = maxIIO;
+		this.minInstructions = minInstructions;
+		this.maxInstructions = maxInstructions;
+	}
 
 	public void run(int tick) {
+	    log.info("Current tick is " + tick);
+	
+	    
+
+		if (!isFinished())
+		{
+			addProcess(ratio, minICPU, maxICPU, 
+					minIIO, maxIIO, 
+					minInstructions, maxInstructions);
+			processesGenerated++;
+		}
+	}
+
+	public void setFinished() {
+		isFinished = true;
 	}
 
 	public boolean isFinished() {
-		return false;
+		return isFinished;
 	}
 
-	public void addProcess(int ratio, int minICPU, int maxICPU, int minIIO, int maxIIO, int inInstructions, int maxInstructions) {
-	
+	public void addProcess(int ratio, int minICPU, int maxICPU, int minIIO, int maxIIO, int minInstructions, int maxInstructions) {
+		Program program = new Program();
+		TYPE type = null;
+		int instructionsCount = getRandomValueFrom(minInstructions, maxInstructions);
+		for(int count = 0; count < instructionsCount; ++count){
+			int commandTypeRatio = getRandomValueFrom(0, 100);
+			int amount;
+			if (commandTypeRatio > ratio){
+				type = TYPE.IO;
+				amount = getRandomValueFrom(minIIO, maxIIO);
+			}else{
+				type = TYPE.CPU;
+				amount = getRandomValueFrom(minICPU, maxICPU);
+			}
+			program.addInstruction(new Instruction(type, amount));
+
+		}
+		log.info("Run process with program: total instrcutions: " + instructionsCount + " CPU instructions amount: "+ program.getTotalCPUInstructionsAmount()+
+				" IO instructions amount: " + program.getTotalIOInstructionsAmount());
+		program.setReady();
+		system.runProcess(new Process(system, program));
+	}
+
+	public int getRandomValueFrom(int minValue, int maxValue){
+		return minValue + (int)(Math.random() * ((maxValue - minValue) + 1));
+	}
+
+	public void setSystem(System system) {
+		this.system = system;
 	}
 }

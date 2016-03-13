@@ -3,42 +3,57 @@ package OS.rfe.by.novik.program;
 import java.util.List;
 
 import OS.rfe.by.novik.instruction.Instruction;
+import OS.rfe.by.novik.instruction.TYPE;
 
 public class Program {
 
 	public List<Instruction> listInstructions;
 
-	public List<Instruction> nextInstruction;
-
 	public boolean ready;
+	
+	public Instruction currentInstruction;
 
-	public void Program() {
+	public Program() {
 	}
 
-	public List<Instruction> getNextInstruction() {
-		return null;
+	public Instruction getNextInstruction() {
+		return listInstructions.get(listInstructions.size() - 1);
 	}
 
 	public void addInstruction(Instruction newInstruction){
-		listInstructions.add(newInstruction);
+		if(!ready){
+			listInstructions.add(newInstruction);
+		}
 	}
 
-	public void ready() {
+	public void setReady() {
+		ready = true;
+		currentInstruction = listInstructions.get(0);
 	}
 
+	public int getAmount( TYPE type){
+		int count = 0;
+		for (Instruction instruction :listInstructions){
+			if(instruction.getType() == type){
+				count++;
+			}
+		}
+		return count;
+	}
+	
 	public int getTotalCPUInstructionsAmount() {
-		return 0;
+		return getAmount(TYPE.CPU);
 	}
 
 	public int getRemainingCPUInstructionsAmount() {
-		return 0;
+		return 1;
 	}
 
 	public int getTotalIOInstructionsAmount() {
-		return 0;
+		return getAmount(TYPE.IO);
 	}
 
 	public int getRemainingIOInstructionsAmount() {
-		return 0;
+		return 1;
 	}
 }
