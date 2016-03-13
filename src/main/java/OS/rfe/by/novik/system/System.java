@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 import OS.rfe.by.novik.disk.Disk;
 import OS.rfe.by.novik.processor.Processor;
-import OS.rfe.by.novik.scheduler.Scheduler;
+import OS.rfe.by.novik.scheduler.FIFOScheduler;
 import OS.rfe.by.novik.user.User;
 import OS.rfe.by.novik.process.Process;
 
@@ -16,7 +16,7 @@ public class System {
 
 	public Disk disk;
 
-	public Scheduler scheduller;
+	public FIFOScheduler scheduller;
 
 	public Process currentProcess;
 
@@ -31,7 +31,7 @@ public class System {
 	public System() {
 	}
 
-	public void init(Processor processor, Disk disk, Scheduler scheduller, User user) {
+	public void init(Processor processor, Disk disk, FIFOScheduler scheduller, User user) {
 		this.processor = processor;
 		processor.setSystem(this);
 
@@ -55,6 +55,7 @@ public class System {
 		int skippedTicks = 0;
 		while (scheduller.getProcessCount() > 0 || !user.isFinished())
 		{
+			
 			tick++;
 			skippedTicks++;
 			if (!((tick % 100) == 0))

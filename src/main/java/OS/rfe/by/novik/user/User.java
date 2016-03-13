@@ -1,7 +1,5 @@
 package OS.rfe.by.novik.user;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Logger;
 
 import OS.rfe.by.novik.instruction.Instruction;
@@ -19,7 +17,7 @@ public class User {
 
 	public int processesToGenerate;
 	
-	public boolean isFinished;
+	public boolean isFinished = false;
 	
 	public int ratio;
 	
@@ -35,7 +33,6 @@ public class User {
 	
 	public User(int processesToGenerate, int ratio, int minICPU, int maxICPU, int minIIO, int maxIIO,
 			int minInstructions, int maxInstructions) {
-		super();
 		this.ratio = ratio;
 		this.minICPU = minICPU;
 		this.maxICPU = maxICPU;
@@ -43,19 +40,22 @@ public class User {
 		this.maxIIO = maxIIO;
 		this.minInstructions = minInstructions;
 		this.maxInstructions = maxInstructions;
+		this.processesToGenerate = processesToGenerate;
 	}
 
 	public void run(int tick) {
 	    log.info("Current tick is " + tick);
-	
-	    
 
-		if (!isFinished())
+	    isFinished = (processesGenerated >= processesToGenerate) || isFinished;
+		if (isFinished == false)
 		{
 			addProcess(ratio, minICPU, maxICPU, 
 					minIIO, maxIIO, 
 					minInstructions, maxInstructions);
 			processesGenerated++;
+		
+		}else{
+			int g = 15;
 		}
 	}
 
@@ -87,7 +87,7 @@ public class User {
 		log.info("Run process with program: total instrcutions: " + instructionsCount + " CPU instructions amount: "+ program.getTotalCPUInstructionsAmount()+
 				" IO instructions amount: " + program.getTotalIOInstructionsAmount());
 		program.setReady();
-		system.runProcess(new Process(system, program));
+		system.runProcess(new Process(new System(), program));
 	}
 
 	public int getRandomValueFrom(int minValue, int maxValue){

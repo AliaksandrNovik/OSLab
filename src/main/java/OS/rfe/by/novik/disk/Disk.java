@@ -1,5 +1,6 @@
 package OS.rfe.by.novik.disk;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import OS.rfe.by.novik.scheduled.ScheduledOperatrion;
@@ -8,9 +9,9 @@ import OS.rfe.by.novik.process.Process;
 
 public class Disk {
 
-	public STATE state;
+	public STATE state = STATE.IDLE;
 
-	public int stateTime;
+	public int stateTime = 0;
 
 	public int warmupTime;
 
@@ -22,9 +23,9 @@ public class Disk {
 
 	public int sleepTimeout;
 
-	public int bytesToTransfer;
+	public int bytesToTransfer = 0;
 
-	public int bytesTransfered;
+	public int bytesTransfered = 0;
 
 	public System system;
 
@@ -40,6 +41,7 @@ public class Disk {
 		this.cooldownTime = coolDownTime;
 		this.transferRate = transferRate;
 		this.sleepTimeout = sleepTimeout;
+		scheduledOperationsList = new ArrayList<ScheduledOperatrion>();
 	}
 
 	public void requestIO(Process process, int bytesToTransfer) {
@@ -58,8 +60,11 @@ public class Disk {
 			if(scheduledOperationsList.size() == 0){
 				state = STATE.WARMUP;
 				stateTime = 0;
-				ScheduledOperatrion scheduledOperation = scheduledOperationsList.get(0);
-				bytesTransfered = scheduledOperation.getBytesToTransfer();
+				if(scheduledOperationsList.size() != 0){
+					ScheduledOperatrion scheduledOperation = scheduledOperationsList.get(0);
+					bytesTransfered = scheduledOperation.getBytesToTransfer();
+				}
+
 			}
 			break;
 		case WARMUP:
@@ -82,13 +87,15 @@ public class Disk {
 			if(bytesTransfered > bytesToTransfer){
 				state = STATE.IDLE;
 				stateTime = 0;
-				ScheduledOperatrion scheduledOperation = scheduledOperationsList.get(0);
-				scheduledOperationsList.remove(0);
-				system.onIoFinished(scheduledOperation.getProcessId());
+				if(scheduledOperationsList.size() != 0){
+					ScheduledOperatrion scheduledOperation = scheduledOperationsList.get(0);
+					scheduledOperationsList.remove(0);
+					system.onIoFinished(scheduledOperation.getProcessId());
+				}
 				break;
 			}
 		}
-		
+
 
 	}
 

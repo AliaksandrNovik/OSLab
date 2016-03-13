@@ -22,15 +22,13 @@ public class Processor {
 		this.frequency = frequency;
 	}
 
-	public Processor(int frequency, Process process) {
+	public Processor(int frequency) {
 		this.frequency = frequency;
-		this.process = process;
 	}
 
 	public int getFrequency() {
 		return frequency;
 	}
-
 
 	public void run() {
 		Process process = system.getCurrentProcess();

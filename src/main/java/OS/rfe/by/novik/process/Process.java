@@ -11,7 +11,7 @@ public class Process {
 
 	public int ticksToRun;
 
-	public boolean sleeping;
+	public boolean sleeping = false;
 
 	public Process(System system, Program program){
 		this.system = system;

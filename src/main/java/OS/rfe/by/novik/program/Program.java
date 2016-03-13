@@ -1,5 +1,6 @@
 package OS.rfe.by.novik.program;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import OS.rfe.by.novik.instruction.Instruction;
@@ -10,10 +11,11 @@ public class Program {
 	public List<Instruction> listInstructions;
 
 	public boolean ready;
-	
+
 	public Instruction currentInstruction;
 
 	public Program() {
+		listInstructions = new ArrayList<Instruction>();
 	}
 
 	public Instruction getNextInstruction() {
@@ -28,7 +30,9 @@ public class Program {
 
 	public void setReady() {
 		ready = true;
-		currentInstruction = listInstructions.get(0);
+		if(listInstructions.size() != 0){
+			currentInstruction = listInstructions.get(0);
+		}
 	}
 
 	public int getAmount( TYPE type){
@@ -40,7 +44,7 @@ public class Program {
 		}
 		return count;
 	}
-	
+
 	public int getTotalCPUInstructionsAmount() {
 		return getAmount(TYPE.CPU);
 	}
